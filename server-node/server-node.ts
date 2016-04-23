@@ -4,7 +4,7 @@
 import * as dotenv from 'dotenv';
 import * as debug  from 'debug';
 import {Server} from './config/app';
-import {Logger} from './../util/logger';
+import {Logger} from './util/logger';
 
 dotenv.config({
     silent: true,
