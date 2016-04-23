@@ -1,0 +1,25 @@
+{
+  "name": "blog-rest-api",
+  "version": "0.0.0",
+  "private": true,
+  "dependencies": {
+    "body-parser": "~1.15.0",
+    "compression": "^1.6.1",
+    "connect-redis": "^3.0.2",
+    "cookie-parser": "~1.4.1",
+    "cors": "^2.7.1",
+    "crypto": "^0.0.3",
+    "debug": "^2.2.0",
+    "dotenv": "^2.0.0",
+    "express": "~4.13.4",
+    "express-session": "^1.13.0",
+    "http": "0.0.0",
+    "johayo-pvs": "0.0.5",
+    "moment": "^2.13.0",
+    "mongoose": "^4.4.13",
+    "morgan": "~1.7.0",
+    "multiparty": "^4.1.2",
+    "serve-favicon": "~2.3.0",
+    "winston": "^2.2.0"
+  }
+}
