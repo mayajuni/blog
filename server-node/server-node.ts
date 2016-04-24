@@ -3,7 +3,7 @@
  */
 import * as dotenv from 'dotenv';
 import {Server} from './config/app';
-import {Logger} from './util/logger';
+import {Logger} from './module/logger';
 
 dotenv.config({
     silent: true,

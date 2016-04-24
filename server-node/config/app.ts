@@ -12,7 +12,7 @@ import * as Session from "express-session";
 import redisStore = require("connect-redis");
 
 /* 로그파일 저장 */
-import {Logger} from './../util/logger';
+import {Logger} from './../module/logger';
 import {Router} from './router';
 import {errorHandler} from './error';
 

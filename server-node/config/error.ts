@@ -1,7 +1,7 @@
 /**
  * Created by mayaj on 2016-04-23.
  */
-import {Logger} from '../util/logger';
+import {Logger} from '../module/logger';
 
 export function errorHandler (err, req, res, next) {
     /* 에러처리 */
