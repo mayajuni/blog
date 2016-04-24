@@ -9,7 +9,7 @@ import * as cookieParser from 'cookie-parser';
 import * as bodyParser from 'body-parser';
 import * as mongoose from 'mongoose';
 import * as Session from "express-session";
-import RedisStore = require("connect-redis");
+import redisStore = require("connect-redis");
 
 /* 로그파일 저장 */
 import {Logger} from './../util/logger';
@@ -18,8 +18,9 @@ import {errorHandler} from './error';
 
 export class Server {
     public app: express.Application;
-    
+    private isProduction: boolean;
     constructor() {
+        this.isProduction = process.env.NODE_ENV && ( process.env.NODE_ENV ).trim().toLowerCase() == 'production';
         //create expressjs application
         this.app = express();
         this.app.use(compression());
@@ -33,17 +34,29 @@ export class Server {
         this.app.use(logger('dev'));
         /* connection Mongo */
         this.connectMongo();
-        /* connection Redis */
+        /* connection Redis Session */
         this.connectRedis();
-        
-        /* 로그를 파일로 저장 */
-        this.app.use(Logger.saveLogFile);
-        
+
+        /* 실서버일때만 적용시킨다. */
+        if(this.isProduction) {
+            /* 로그를 파일로 저장 */
+            this.app.use(Logger.saveLogFile);
+        }
         this.app.use(Router);
-        
-        /* 에러로그를 파일로 저장 */
-        this.app.use(Logger.saveErrorLogFile);
-        
+
+        /* Not Foud */
+        this.app.use((req: express.Request, res: express.Response, next: Function) => {
+            let err: any = new Error('Not Foud');
+            err.statusCode = 404;
+            next(err);
+        });
+
+        /* 실서버일때만 적용시킨다. */
+        if(this.isProduction) {
+            /* 에러로그를 파일로 저장 */
+            this.app.use(Logger.saveErrorLogFile);
+        }
+
         /* 에러 핸들러 */
         this.app.use(errorHandler);
     }
@@ -51,14 +64,16 @@ export class Server {
     private connectMongo() {
         let connect = () => mongoose.connect(process.env.MONGO_URL);
         mongoose.connection.on('disconnected', connect);
+        mongoose.connection.on('connect', () => Logger.log('mongo connected'));
         mongoose.connection.on('error', err => {
-            Logger.errorLog.error(err);
+            Logger.errorLog(err);
         });
     }
 
     private connectRedis() {
+        const RedisStore = redisStore(Session);
         this.app.use(Session({
-            store: new RedisStore(Session)({
+            store: new RedisStore({
                 port: process.env.REDIS_PORT,
                 host: process.env.REDIS_HOST,
                 pass: process.env.REDIS_PASSWORD,
@@ -72,6 +87,6 @@ export class Server {
             cookie: {
                 secure: false
             }
-        }))
+        }));
     }
 }
