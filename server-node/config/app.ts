@@ -13,7 +13,7 @@ import redisStore = require("connect-redis");
 
 /* 로그파일 저장 */
 import {Logger} from './../util/logger';
-import * as Router from './router';
+import {Router} from './router';
 import {errorHandler} from './error';
 
 export class Server {
@@ -42,7 +42,9 @@ export class Server {
             /* 로그를 파일로 저장 */
             this.app.use(Logger.saveLogFile);
         }
-        this.app.use(Router);
+        
+        /* 라우터 */
+        Router(this.app);
 
         /* Not Foud */
         this.app.use((req: express.Request, res: express.Response, next: Function) => {
