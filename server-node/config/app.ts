@@ -14,11 +14,12 @@ import redisStore = require("connect-redis");
 /* 로그파일 저장 */
 import {Logger} from './../module/logger';
 import {Router} from './router';
-import {errorHandler} from './error';
+import {errorHandler} from './../module/error';
 
 export class Server {
     public app: express.Application;
     private isProduction: boolean;
+
     constructor() {
         this.isProduction = process.env.NODE_ENV && ( process.env.NODE_ENV ).trim().toLowerCase() == 'production';
         //create expressjs application
@@ -66,10 +67,10 @@ export class Server {
     private connectMongo() {
         let connect = () => mongoose.connect(process.env.MONGO_URL);
         mongoose.connection.on('disconnected', connect);
-        mongoose.connection.on('connect', () => Logger.log('mongo connected'));
         mongoose.connection.on('error', err => {
             Logger.errorLog(err);
         });
+        connect();
     }
 
     private connectRedis() {
