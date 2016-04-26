@@ -6,7 +6,7 @@ import * as mongoose from 'mongoose';
 /**
  * mongo model 모듈
  */
-export module Model {
+export module Models {
     let Schema = mongoose.Schema;
 
     /* 관리자 */
@@ -55,7 +55,7 @@ export module Model {
         userId: String,
         title: String,
         memo: String,
-        hasTag: [String],
+        tags: [String],
         url: String,
         imgUrl: String,
         regDt: {type: Date, default: Date.now}

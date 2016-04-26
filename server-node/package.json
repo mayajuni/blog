@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "body-parser": "~1.15.0",
+    "cheerio": "^0.20.0",
     "compression": "^1.6.1",
     "connect-redis": "^3.0.2",
     "cookie-parser": "~1.4.1",
@@ -14,11 +15,15 @@
     "express": "~4.13.4",
     "express-session": "^1.13.0",
     "http": "0.0.0",
+    "install": "^0.6.1",
     "johayo-pvs": "0.0.5",
     "moment": "^2.13.0",
     "mongoose": "^4.4.13",
     "morgan": "~1.7.0",
     "multiparty": "^4.1.2",
+    "npm": "^3.8.7",
+    "request": "^2.72.0",
+    "request-promise": "^3.0.0",
     "serve-favicon": "~2.3.0",
     "winston": "^2.2.0"
   }

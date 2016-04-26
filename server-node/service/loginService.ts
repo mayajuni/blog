@@ -1,12 +1,11 @@
 /**
  * Created by mayaj on 2016-04-25.
  */
-import {Model} from '../module/mongo';
+import {Models} from '../models/models';
 import {Crypto} from '../module/crypto';
-import {} from '../module/error';
 import {error} from "../module/error";
 
-const Admin = Model.admin;
+const Admin = Models.admin;
 const passwordKey = process.env.PASSWORD_KEY || 'testKey';
 
 export module LoginService {
@@ -39,7 +38,7 @@ export module LoginService {
         if(!admin) {
             error(409, '토큰이 잘못되었습니다.');
         }
-        
+
         return admin;
     }
 }

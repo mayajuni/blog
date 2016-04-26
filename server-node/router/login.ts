@@ -7,6 +7,7 @@ import johayoPvs = require("johayo-pvs");
 
 let wrap = fn => (req, res, next) => fn(req, res, next).catch(next);
 let router = Router();
+
 /* 변수 체크 */
 const loginVO = new johayoPvs({
     userId: {type: String, validate: {checkURL: ['!/api/login/token']}},
