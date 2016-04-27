@@ -20,7 +20,7 @@ export module LoginService {
         const admin = await Admin.findOne({_id: userId, password: Crypto.encrypt(password, passwordKey)}, {password: -1});
 
         if(!admin) {
-            error(409, '아이디 / 패스워드를 확인해주세요.');
+            error(400, '아이디 / 패스워드를 확인해주세요.');
         }
 
         return admin;

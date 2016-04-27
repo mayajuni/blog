@@ -5,7 +5,9 @@ import {Router} from "express";
 import {LoginService} from "../service/loginService";
 import johayoPvs = require("johayo-pvs");
 
-let wrap = fn => (req, res, next) => fn(req, res, next).catch(next);
+/* 에러시 check를 하여 next(err)을 해준다. */
+import {wrap} from "../module/error";
+
 let router = Router();
 
 /* 변수 체크 */
@@ -21,7 +23,7 @@ loginVO.setParams = (req, res, next) => {
 /**
  * 로그인 하기
  */
-router.post('/', loginVO.setParams, wrap(async function(req, res) {
+router.post('/', loginVO.setParams, wrap(async (req, res) => {
     const admin = await LoginService.login(loginVO.get.userId, loginVO.get.password);
     req.session.admin = admin;
     res.send(admin);

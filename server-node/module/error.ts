@@ -19,3 +19,5 @@ export function error(statusCode: number, message: string) {
     err.statusCode = statusCode;
     throw err;
 }
+
+export let wrap = fn => (...args) => fn(...args).catch(args[2]);

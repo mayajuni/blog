@@ -18,7 +18,7 @@ export module Models {
         regDt: {type: Date, default: Date.now}
     }));
 
-    /* 메뉴 */
+    /* 메뉴 - 메뉴 스키마는 서브 메뉴에서 또 쓰이기때문에 밖으로 뺐다. */
     const menuSchema = new Schema({
         name: {type: String, unique: true},
         nickName: String,
@@ -39,6 +39,21 @@ export module Models {
         regDt: {type: Date, default: Date.now}
     }));
 
+    /* 파일 - 파일 스키마는 board 스키마에서 쓰이기 때문에 밖으로뺐다. */
+    export let file = mongoose.model('file', new Schema({
+        _itemId: Schema.Types.ObjectId,
+        name: String,
+        userId: String,
+        path: String,
+        url: String,
+        virtualName: String,
+        size: String,
+        isImg: Boolean,
+        type: String,
+        needDelete: {type: Boolean, default: false},
+        regDt: {type: Date, default: Date.now}
+    }));
+
     /* 게시판 */
     export let board = mongoose.model('board',  new Schema({
         _menuId: Schema.Types.ObjectId,
@@ -46,6 +61,7 @@ export module Models {
         title: String,
         content: String,
         hasTag: [String],
+        /* file doc 스키마를 보면된다. */
         files: [],
         regDt: {type: Date, default: Date.now}
     }));
