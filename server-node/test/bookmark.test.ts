@@ -114,7 +114,6 @@ describe('bookmark', () => {
             });
 
             afterEach((done) => {
-                a = 0;
                 done();
             });
         });
@@ -127,7 +126,6 @@ describe('bookmark', () => {
             });
 
             afterEach((done) => {
-                a = 0;
                 done();
             });
         });
@@ -140,7 +138,6 @@ describe('bookmark', () => {
             });
 
             afterEach((done) => {
-                a = 0;
                 done();
             });
         });
