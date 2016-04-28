@@ -6,7 +6,6 @@ import {Crypto} from '../module/crypto';
 import {error} from "../module/error";
 
 const Admin = Models.admin;
-const passwordKey = process.env.PASSWORD_KEY || 'testKey';
 
 export module LoginService {
     /**
@@ -17,11 +16,17 @@ export module LoginService {
      * @returns {T}
      */
     export async function login(userId: string, password: string) {
-        const admin = await Admin.findOne({_id: userId, password: Crypto.encrypt(password, passwordKey)}, {password: -1});
+        const passwordKey = process.env.PASSWORD_KEY || 'testKey';
+
+        const admin: any = await Admin.findOne({_id: userId, password: Crypto.encrypt(password, passwordKey)}, {password: 0});
 
         if(!admin) {
-            error(400, '아이디 / 패스워드를 확인해주세요.');
+            /* '아이디/패스워드를 확인해주세요.' */
+            error(400, 'check_id_pw');
         }
+
+        admin._doc.userId = admin._id;
+        delete admin._doc._id;
 
         return admin;
     }
@@ -33,11 +38,15 @@ export module LoginService {
      * @returns {T}
      */
     export async function tokenLogin(token) {
-        const admin = await Admin.findOne({token: token}, {password: -1});
+        const admin: any = await Admin.findOne({token: token}, {password: 0});
         
         if(!admin) {
-            error(409, '토큰이 잘못되었습니다.');
+            /* 잘못된 토큰 입니다. */
+            error(400, 'bad_token');
         }
+
+        admin._doc.userId = admin._id;
+        delete admin._doc._id;
 
         return admin;
     }

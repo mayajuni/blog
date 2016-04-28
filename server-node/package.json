@@ -2,6 +2,9 @@
   "name": "blog-rest-api",
   "version": "0.0.0",
   "private": true,
+  "scripts": {
+    "test": "mocha"
+  },
   "dependencies": {
     "body-parser": "~1.15.0",
     "cheerio": "^0.20.0",
@@ -16,7 +19,7 @@
     "express-session": "^1.13.0",
     "http": "0.0.0",
     "install": "^0.6.1",
-    "johayo-pvs": "0.0.5",
+    "johayo-pvs": "0.0.6",
     "moment": "^2.13.0",
     "mongoose": "^4.4.13",
     "morgan": "~1.7.0",
@@ -28,8 +31,8 @@
     "winston": "^2.2.0"
   },
   "devDependencies": {
-    "chai": "^3.5.0",
-    "chai-http": "^2.0.1",
-    "mocha": "^2.4.5"
+    "mocha": "^2.4.5",
+    "should": "^8.3.1",
+    "supertest": "^1.2.0"
   }
 }

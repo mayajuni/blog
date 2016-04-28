@@ -5,18 +5,18 @@ import {Logger} from './logger';
 
 export function errorHandler (err, req, res, next) {
     /* 에러처리 */
-    err.statusCode  = err.statusCode || err.status || 500;
+    err.status  = err.status || 500;
 
-    Logger.errorLog(`error on requst ${req.method} | ${req.url} | ${err.statusCode}`);
+    Logger.errorLog(`error on requst ${req.method} | ${req.url} | ${err.status}`);
     Logger.errorLog(err.stack || `${err.code}  ${err.message}`);
 
-    err.message = err.statusCode  == 500 ? 'Something bad happened.' : err.message;
-    res.status(err.statusCode).send(err.message);
+    err.message = err.status  == 500 ? 'Something bad happened.' : err.message;
+    res.status(err.status).send(err.message);
 }
 
-export function error(statusCode: number, message: string) {
+export function error(status: number, message: string) {
     let err: any = new Error(message);
-    err.statusCode = statusCode;
+    err.status = status;
     throw err;
 }
 

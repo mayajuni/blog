@@ -38,7 +38,7 @@ router.get('/', VO.setParams, wrap(async (req, res) => {
  * 저장하기
  */
 router.post('/', loginCheck, VO.setParams, wrap(async (req, res) => {
-    await BookmarkService.save(req.session.admin._id, VO.get);
+    await BookmarkService.save(req.session.admin.userId, VO.get);
     res.status(200).end();
 }));
 
@@ -46,7 +46,7 @@ router.post('/', loginCheck, VO.setParams, wrap(async (req, res) => {
  * 수정하기
  */
 router.put('/:_id', loginCheck, VO.setParams, wrap(async (req, res) => {
-    await BookmarkService.put(req.session.admin._id, VO.get);
+    await BookmarkService.put(req.session.admin.userId, VO.get);
     res.status(200).end();
 }));
 
@@ -54,7 +54,7 @@ router.put('/:_id', loginCheck, VO.setParams, wrap(async (req, res) => {
  * 삭제하기
  */
 router.delete('/:_id', loginCheck, wrap(async (req, res) => {
-    await BookmarkService.remove(req.session.admin._id, req.params._id);
+    await BookmarkService.remove(req.session.admin.userId, req.params._id);
     res.status(200).end();
 }));
 

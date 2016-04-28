@@ -20,3 +20,4 @@ app.listen(app.get('port'), () => {
     Logger.errorLog(err);
 });
 
+module.exports = app;

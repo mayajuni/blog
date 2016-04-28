@@ -23,6 +23,8 @@
     "request-promise": "registry:dt/request-promise#0.4.2+20160316155526",
     "serve-favicon": "registry:dt/serve-favicon#0.0.0+20160316155526",
     "serve-static": "registry:dt/serve-static#0.0.0+20160317120654",
+    "should": "registry:dt/should#8.1.1+20160316155526",
+    "supertest": "registry:dt/supertest#1.1.0+20160317120654",
     "winston": "registry:dt/winston#0.0.0+20160417152829"
   },
   "dependencies": {

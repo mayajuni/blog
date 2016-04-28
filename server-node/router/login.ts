@@ -33,8 +33,16 @@ router.post('/', loginVO.setParams, wrap(async (req, res) => {
  * 로그인 정보 주기
  */
 router.get('/', (req, res) => {
-    res.send(req.session['admin']);
+    res.json(req.session['admin']);
 });
+
+/**
+ * 로그아웃
+ */
+router.get('/logout', wrap(async (req, res) => {
+    req.session.destroy();
+    res.end();
+}));
 
 /**
  * 로그인 정보 주기
