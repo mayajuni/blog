@@ -50,8 +50,7 @@ describe('Login', () => {
                 });
         });
         it('나의 로그인 정보 가지고 오기 GET /api/login', (done) => {
-            server.post(url)
-                .send({userId: 'test', password: 'test'})
+            server.get(url)
                 .expect("Content-type",/json/)
                 .expect(200)
                 .end(function(err,res){

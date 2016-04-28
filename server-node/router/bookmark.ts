@@ -27,11 +27,19 @@ VO.setParams = (req, res, next) => {
 };
 
 /**
- * 저장하기
+ * 가져오기
  */
 router.get('/', VO.setParams, wrap(async (req, res) => {
     const bookmarks = await BookmarkService.get(VO.get.tags);
     res.send(bookmarks);
+}));
+
+/**
+ * URL 정보를 가져온다
+ */
+router.get('/getUrlInfo/:url', loginCheck, wrap(async (req, res) => {
+    const urlInfo = await BookmarkService.getUrlInfo(req.params.url);
+    res.json(urlInfo);
 }));
 
 /**
