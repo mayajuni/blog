@@ -7,10 +7,11 @@ require('should');
 import * as app from "../server-node";
 
 const server: any = request('http://localhost:3000');
+/*const server: any = request(app);*/
 
 describe('Login', () => {
     const url = '/api/login';
-    describe('테스트', function () {
+    describe('테스트', () => {
         it('로그인 테스트 POST /api/login ', (done) => {
             server.post(url)
                 .send({userId: 'test', password: 'test'})

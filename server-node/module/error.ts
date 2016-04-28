@@ -20,4 +20,4 @@ export function error(status: number, message: string) {
     throw err;
 }
 
-export let wrap = fn => (...args) => fn(...args).catch(args[2]);
+export let wrap = fn => (req, res, next) => fn(req, res, next).catch(next);

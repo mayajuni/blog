@@ -2,14 +2,9 @@
  * Created by mayaj on 2016-04-23.
  */
 import * as login from '../router/login';
+import * as bookmark from '../router/bookmark';
 
 export function Router(app) {
-    /* 로그인전 */
     app.use('/api/login', login);
-
-    /* 로그인 체크 */
-
-    
-    /* 로그인후 */
-
+    app.use('/api/bookmark', bookmark);
 }
