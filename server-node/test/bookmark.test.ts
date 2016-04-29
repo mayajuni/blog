@@ -6,8 +6,8 @@ require('should');
 
 import * as app from "../server-node";
 
-const server: any = request('http://localhost:3000');
-/*const server: any = request(app);*/
+const server: any = request.agent('http://localhost:3000');
+/*const server: any = request.agent(app);*/
 
 const url = '/api/bookmark';
 const logout = (done) => server.get('/api/login/logout').end(done);
@@ -28,9 +28,9 @@ const checkGet = (done) => {
 };
 // 북마크 tag 검색 조건으로 가져오기 GET ${url}
 const checkSearchTagGet = (done) => {
+    const tags = ['test1'];
     server.get(url)
-        .query({tegs: ['123','333','444']})
-        .expect("Content-type",/json/)
+        .query({tags: ['test1']})
         .expect(200)
         .end((err, res) => {
             if(err) throw err;
@@ -46,9 +46,14 @@ const checkSearchTagGet = (done) => {
                     bookmark.tags.should.be.a.instanceof(Array);
 
                     for(const tag of bookmark.tags) {
-                        if(tag == '123' || tag == '123' || tag == '123') {
-                            isOk=true;
-                            break;
+                        for(const param of tags) {
+                            if(tag == param) {
+                                isOk=true;
+                                break;
+                            }
+                        }
+                        if(isOk) {
+                            break
                         }
                     }
                     if(!isOk) {
@@ -68,12 +73,13 @@ describe('bookmark', () => {
             it(`북마크 tag 검색 조건으로 가져오기 GET ${url}`, checkSearchTagGet);
         });
         describe('로그인후', () => {
+            let _id: string = '';
             beforeEach(login);
 
             it(`북마크 데이터 가져오기 GET ${url}`, checkGet);
             it(`북마크 tag 검색 조건으로 가져오기 GET ${url}`, checkSearchTagGet);
             it(`북마크 url 정보 가져오기 ${url}/getUrlInfo/:url`, (done) => {
-                const paramUrl = 'www.naver.com';
+                const paramUrl = encodeURIComponent('www.naver.com');
                 server
                     .get(`${url}/getUrlInfo/${paramUrl}`)
                     .expect(200)
@@ -81,33 +87,177 @@ describe('bookmark', () => {
                     .end((err, res) => {
                         if(err) throw err;
 
-                        res.status.should.equal(200);
                         res.error.should.equal(false);
-                        res.body.should.be.a.Array();
+                        res.body.should.be.a.Object();
                         res.body.should.have.property('title');
                         res.body.should.have.property('og:title');
                         res.body.should.have.property('og:description');
-                        res.body.should.not.have.property('og:image');
+                        res.body.should.have.property('og:image');
 
                         done();
                     })
             });
-            it(`북마크 저장 POST ${url}`);
-            it(`북마크 수정 PUT ${url}`);
-            it(`북마크 삭제 DELETE ${url}`);
+            it(`북마크 저장 POST ${url}`, (done) => {
+                server
+                    .post(url)
+                    .send({title: '테스트', memo: '테스트입니다.', tags: ['test1', 'test2', 'test3'], url: 'naver.com', imgUrl: 'http://static.naver.net/www/mobile/edit/2016/0407/mobile_17004159045.png'})
+                    .expect(200)
+                    .expect("Content-type",/json/)
+                    .end((err, res) => {
+                        if(err) throw err;
+                        res.body.should.be.a.Object();
+                        res.body.should.have.property('title');
+                        res.body.should.have.property('regDt');
+                        res.body.should.have.property('tags');
+                        res.body.should.have.property('_id');
+                        res.body.should.have.property('url');
+                        _id = res.body._id;
+                        done();
+                    });
+            });
+            it(`북마크 수정 PUT ${url}`, (done) => {
+                server
+                    .put(url)
+                    .send({_id: _id, title: '테스트 변경처리', memo: '변경 테스트입니다.', tags: ['test1'], url: 'http://fdjskbn.com'})
+                    .expect(200)
+                    .end(done);
+            });
+            it(`북마크 삭제 DELETE ${url}/:_id`, (done) => {
+                server
+                    .delete(`${url}/${_id}`)
+                    .expect(200)
+                    .end(done);
+            });
         });
     });
+
     describe('오류테스트', () => {
         describe('로그인전', () => {
             beforeEach(logout);
-            it(`북마크 저장 오류(로그인 필수)`);
-            it(`북마크 수정 오류(로그인 필수)`);
-            it(`북마크 삭제 오류(로그인 필수)`);
+            it(`북마크 저장 오류(로그인 필수)`, (done) => {
+                server
+                    .post(url)
+                    .send({title: '테스트', memo: '테스트입니다.', tags: ['test1', 'test2', 'test3'], url: 'naver.com', imgUrl: 'http://static.naver.net/www/mobile/edit/2016/0407/mobile_17004159045.png'})
+                    .expect(401)
+                    .end((err, res) => {
+                        if(err) throw err;
+
+                        res.should.have.property('error');
+                        res.error.text.should.equal('need_login');
+                        done();
+                    });
+            });
+            it(`북마크 수정 오류(로그인 필수)`, (done) => {
+                server
+                    .put(url)
+                    .send({title: '테스트 변경처리', memo: '변경 테스트입니다.', tags: ['test1'], url: 'http://fdjskbn.com'})
+                    .expect(401)
+                    .end((err, res) => {
+                        if(err) throw err;
+
+                        res.should.have.property('error');
+                        res.error.text.should.equal('need_login');
+                        done();
+                    });
+            });
+            it(`북마크 삭제 오류(로그인 필수)`, (done) => {
+                server
+                    .delete(`${url}/122`)
+                    .expect(401)
+                    .end((err, res) => {
+                        if (err) throw err;
+
+                        res.should.have.property('error');
+                        res.error.text.should.equal('need_login');
+                        done();
+                    });
+            });
         });
 
         describe('로그인후', () => {
             beforeEach(login);
 
+            describe('북마크 저장 필수값 체크', () => {
+                const params: any = {
+                    title: '테스트',
+                    tags: ['test1', 'test2', 'test3'],
+                    url: 'naver.com'
+                };
+
+                for(const key in params) {
+                    let testParams: any = {};
+                    for(const sKey in params) {
+                        if(key != sKey) {
+                            testParams[sKey] = params[sKey];
+                        }
+                    }
+                    it(`${key} 오류`, (done) => {
+                        server
+                            .post(url)
+                            .send(testParams)
+                            .expect(400)
+                            .end((err, res) => {
+                                if (err) throw err;
+
+                                res.should.have.property('error');
+                                res.error.text.should.equal(key);
+                                done();
+                            });
+                    });
+                }
+            });
+            describe('북마크 수정 필수값 체크', () => {
+                const params: any = {
+                    _id: '테스트',
+                    title: '테스트',
+                    tags: ['test1', 'test2', 'test3'],
+                    url: 'naver.com'
+                };
+
+                for(const key in params) {
+                    let testParams: any = {};
+                    for(const sKey in params) {
+                        if(key != sKey) {
+                            testParams[sKey] = params[sKey];
+                        }
+                    }
+                    it(`${key} 오류`, (done) => {
+                        server
+                            .put(url)
+                            .send(testParams)
+                            .expect(400)
+                            .end((err, res) => {
+                                if (err) throw err;
+
+                                res.should.have.property('error');
+                                res.error.text.should.equal(key);
+                                done();
+                            });
+                    });
+                }
+            });
+            it('북마크 삭제 필수값 체크', (done) => {
+                server
+                    .delete(`${url}`)
+                    .expect(404)
+                    .end((err, res) => {
+                        if (err) throw err;
+
+                        res.should.have.property('error');
+                        res.error.text.should.equal('not_found');
+                        done();
+                    });
+            });
+
+            const _id = '5722fdf597a47c6026a2e586';
+            it(`북마크 남의것 수정 오류`, (done) => {
+                server
+                    .put(url)
+                    .send({_id: _id, title: '테스트 변경처리', memo: '변경 테스트입니다.', tags: ['test1'], url: 'http://fdjskbn.com'})
+                    .expect(200)
+                    .end(done);
+            });
+            it(`북마크 남의것 삭제 오류`);
         });
     });
 });

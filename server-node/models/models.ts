@@ -60,7 +60,7 @@ export module Models {
         userId: String,
         title: String,
         content: String,
-        hasTag: [String],
+        tags: [String],
         /* file doc 스키마를 보면된다. */
         files: [],
         regDt: {type: Date, default: Date.now}

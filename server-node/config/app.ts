@@ -49,8 +49,8 @@ export class Server {
 
         /* Not Foud */
         this.app.use((req: express.Request, res: express.Response, next: Function) => {
-            let err: any = new Error('Not Foud');
-            err.statusCode = 404;
+            let err: any = new Error('not_found');
+            err.status = 404;
             next(err);
         });
 

@@ -17,7 +17,11 @@ export module BookmarkService {
     export function get(tags: string[]) {
         let query: any = {};
         if(tags) {
-            query.categories = {$in: tags}
+            if(typeof tags === 'string') {
+                query.tags = {$elemMatch: {$eq: tags}};
+            }else{
+                query.tags = {$in: tags};
+            }
         }
 
         return Bookmark.find(query);
@@ -30,6 +34,10 @@ export module BookmarkService {
      * @returns {any}
      */
     export async function getUrlInfo(url: string) {
+        if(!url.includes('http://') && !url.includes('https://')) {
+            url = `http://${url}`;
+        }
+
         const html = await request(url);
         const $ = cheerio.load(html);
         let htmlInfo: any = {
@@ -61,8 +69,11 @@ export module BookmarkService {
      * @param bookMarkVO
      * @returns {any|void|Query<T>}
      */
-    export function save(userId: string, bookMarkVO: any) {
-        let bookmark: any = new Bookmark(bookMarkVO);
+    export function save(userId: string, bookmarkVO: any) {
+        if(!bookmarkVO.url.includes('http://') && !bookmarkVO.url.includes('https://')) {
+            bookmarkVO.url = `http://${bookmarkVO.url}`;
+        }
+        let bookmark: any = new Bookmark(bookmarkVO);
         bookmark.userId = userId;
         return bookmark.save();
     }
@@ -75,8 +86,13 @@ export module BookmarkService {
      * @param bookmarkVO
      * @returns {Query<T>}
      */
-    export function put(userId: string, bookmarkVO: any) {
-        return Bookmark.update({_id: bookmarkVO._id, userId: userId},{$set: bookmarkVO})
+    export async function put(userId: string, bookmarkVO: any) {
+        if(!bookmarkVO.url.includes('http://') && !bookmarkVO.url.includes('https://')) {
+            bookmarkVO.url = `http://${bookmarkVO.url}`;
+        }
+        const result = await Bookmark.update({_id: bookmarkVO._id, userId: userId},{$set: bookmarkVO})
+        
+        return
     }
 
     /**

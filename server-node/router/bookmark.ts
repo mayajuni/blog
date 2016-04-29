@@ -15,11 +15,11 @@ let router = Router();
 
 /* 변수 체크 */
 const VO = new johayoPvs({
-    _id: {type: String, validate: {method: 'put, delete'}},
-    title: {type: String, validate: {method: 'put, post'}},
+    _id: {type: String, validate: {method: 'PUT, DELETE'}},
+    title: {type: String, validate: {method: 'PUT, POST'}},
     memo: String,
-    tags: {type: Array, validate: {method: 'put, post'}},
-    url:  {type: String, validate: {method: 'put, post'}},
+    tags: {type: Array, validate: {method: 'PUT, POST'}},
+    url:  {type: String, validate: {method: 'PUT, POST'}},
     imgUrl: String,
 });
 VO.setParams = (req, res, next) => {
@@ -46,14 +46,14 @@ router.get('/getUrlInfo/:url', loginCheck, wrap(async (req, res) => {
  * 저장하기
  */
 router.post('/', loginCheck, VO.setParams, wrap(async (req, res) => {
-    await BookmarkService.save(req.session.admin.userId, VO.get);
-    res.status(200).end();
+    const result = await BookmarkService.save(req.session.admin.userId, VO.get);
+    res.json(result);
 }));
 
 /**
  * 수정하기
  */
-router.put('/:_id', loginCheck, VO.setParams, wrap(async (req, res) => {
+router.put('/', loginCheck, VO.setParams, wrap(async (req, res) => {
     await BookmarkService.put(req.session.admin.userId, VO.get);
     res.status(200).end();
 }));

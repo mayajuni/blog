@@ -6,8 +6,8 @@ require('should');
 
 import * as app from "../server-node";
 
-const server: any = request('http://localhost:3000');
-/*const server: any = request(app);*/
+const server: any = request.agent('http://localhost:3000');
+/*const server: any = request.agent(app);*/
 
 describe('Login', () => {
     const url = '/api/login';

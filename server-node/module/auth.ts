@@ -5,7 +5,7 @@
 export function loginCheck(req, res, next) {
     if(!req.session.admin) {
         let err: any = new Error('need_login');
-        err.statusCode = 401;
+        err.status = 401;
         next(err);
     }else{
         next();
