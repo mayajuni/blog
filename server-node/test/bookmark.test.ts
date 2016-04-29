@@ -254,10 +254,27 @@ describe('bookmark', () => {
                 server
                     .put(url)
                     .send({_id: _id, title: '테스트 변경처리', memo: '변경 테스트입니다.', tags: ['test1'], url: 'http://fdjskbn.com'})
-                    .expect(200)
-                    .end(done);
+                    .expect(400)
+                    .end((err, res) => {
+                        if (err) throw err;
+
+                        res.should.have.property('error');
+                        res.error.text.should.equal('no_authority');
+                        done();
+                    });
             });
-            it(`북마크 남의것 삭제 오류`);
+            it(`북마크 남의것 삭제 오류`, (done) => {
+                server
+                    .delete(`${url}/${_id}`)
+                    .expect(400)
+                    .end((err, res) => {
+                        if (err) throw err;
+
+                        res.should.have.property('error');
+                        res.error.text.should.equal('no_authority');
+                        done();
+                    });
+            });
         });
     });
 });

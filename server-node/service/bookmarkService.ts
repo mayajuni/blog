@@ -4,6 +4,7 @@
 import * as request from 'request-promise';
 import * as cheerio from 'cheerio';
 import {Models} from '../models/models';
+import {error} from "../module/error";
 
 const Bookmark = Models.bookmark;
 
@@ -90,9 +91,12 @@ export module BookmarkService {
         if(!bookmarkVO.url.includes('http://') && !bookmarkVO.url.includes('https://')) {
             bookmarkVO.url = `http://${bookmarkVO.url}`;
         }
-        const result = await Bookmark.update({_id: bookmarkVO._id, userId: userId},{$set: bookmarkVO})
-        
-        return
+        const result: any = await Bookmark.update({_id: bookmarkVO._id, userId: userId},{$set: bookmarkVO});
+
+        if(result.nModified < 1) {
+            error(400, 'no_authority');
+        }
+        return result
     }
 
     /**
@@ -101,7 +105,14 @@ export module BookmarkService {
      * @param userId
      * @param _id
      */
-    export function remove(userId: string, _id: string) {
-        return Bookmark.remove({_id: _id, userId: userId});
+    export async function remove(userId: string, _id: string) {
+        const result: any = await Bookmark.remove({_id: _id, userId: userId});
+
+        console.log(result.result);
+        if(result.result.n < 1) {
+            error(400, 'no_authority');
+        }
+
+        return result;
     }
 }
