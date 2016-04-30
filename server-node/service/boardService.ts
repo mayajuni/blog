@@ -58,11 +58,10 @@ export module BoardService {
      * 게시판을 수정한다.
      *
      * @param userId
-     * @param _Id
      * @param boardVO
      */
-    export function put(userId: string, _Id: string, boardVO: any) {
-        return Board.update({_id: _Id, userId: userId},{$set: boardVO});
+    export function put(userId: string, boardVO: any) {
+        return Board.update({_id: boardVO._Id, userId: userId},{$set: boardVO});
     }
 
     /**

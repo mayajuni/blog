@@ -27,7 +27,7 @@ VO.setParams = (req, res, next) => {
 };
 
 /**
- * 가져오기
+ * 리스트
  */
 router.get('/', VO.setParams, wrap(async (req, res) => {
     const bookmarks = await BookmarkService.get(VO.get.tags);
