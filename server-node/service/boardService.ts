@@ -62,7 +62,7 @@ export module BoardService {
      * @param boardVO
      */
     export function put(userId: string, _Id: string, boardVO: any) {
-        Board.update({_id: _Id, userId: userId},{$set: boardVO});
+        return Board.update({_id: _Id, userId: userId},{$set: boardVO});
     }
 
     /**
@@ -78,13 +78,13 @@ export module BoardService {
             error(400, '이미 삭제 되었거나, 삭제 권한이 없습니다.')
         }
 
-        await Board.remove({_id: _id, userId: userId});
+        const result = await Board.remove({_id: _id, userId: userId});
 
         if(board.files){
             await FileService.remove(_id);
         }
 
-        return;
+        return result;
     }
 
     /**
@@ -101,6 +101,6 @@ export module BoardService {
             await FileService.addItemIds(boardVO.files, result._id);
         }
 
-        return;
+        return result;
     }
 }
