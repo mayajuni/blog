@@ -60,8 +60,14 @@ export module BoardService {
      * @param userId
      * @param boardVO
      */
-    export function put(userId: string, boardVO: any) {
-        return Board.update({_id: boardVO._Id, userId: userId},{$set: boardVO});
+    export async function put(userId: string, boardVO: any) {
+        const result: any = await Board.update({_id: boardVO._Id, userId: userId},{$set: boardVO});
+
+        if(result.nModified < 1) {
+            error(400, 'no_authority');
+        }
+
+        return result;
     }
 
     /**
@@ -74,7 +80,7 @@ export module BoardService {
     export async function remove(userId: string, _id: string) {
         const board: any = await Board.findOne({_id: _id, userId: userId});
         if(!board) {
-            error(400, '이미 삭제 되었거나, 삭제 권한이 없습니다.')
+            error(400, 'no_authority');
         }
 
         const result = await Board.remove({_id: _id, userId: userId});

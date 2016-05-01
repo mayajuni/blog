@@ -108,7 +108,6 @@ export module BookmarkService {
     export async function remove(userId: string, _id: string) {
         const result: any = await Bookmark.remove({_id: _id, userId: userId});
 
-        console.log(result.result);
         if(result.result.n < 1) {
             error(400, 'no_authority');
         }

@@ -12,3 +12,106 @@ const server: any = request.agent('http://localhost:3000');
 const url = '/api/board';
 const logout = (done) => server.get('/api/login/logout').end(done);
 const login = (done) => server.post('/api/login').send({userId: 'test', password: 'test'}).end(done);
+
+// 게시판 가지고 오기
+const checkGet = (done) => {
+    server.get(url)
+        .expect("Content-type",/json/)
+        .expect(200)
+        .end((err, res) => {
+            if(err) throw err;
+            res.error.should.equal(false);
+            res.body.should.be.a.Array();
+            res.status.should.equal(200);
+            done();
+        })
+};
+
+// 게시판 title 조건으로 가져오기 GET ${url}
+const checkSearchGet = (done) => {
+    const title = '';
+    const _menuId = '';
+    server.get(url)
+        .query({title: title, _menuId: _menuId})
+        .expect(200)
+        .end((err, res) => {
+            if(err) throw err;
+
+            res.status.should.equal(200);
+            res.error.should.equal(false);
+            res.body.should.be.a.Array();
+            /* 데이터 검증 */
+            if(res.body) {
+                for(const board of res.body) {
+                    let isOk = false;
+                    board.should.be.a.instanceof(Object);
+
+                    if(_menuId) {
+                        if(_menuId != board._menuId) {
+                            return done(new Error('_menuId 데이터 검증에 실패하였습니다.'));
+                        }
+                    }
+
+                    if(title) {
+                        if(!board.title.includes(title)) {
+                            return done(new Error('title 데이터 검증에 실패하였습니다.'));
+                        }
+                    }
+                }
+            }
+
+            done();
+        })
+};
+
+describe('board', () => {
+    describe('테스트', () => {
+        describe('로그인전', () => {
+            it(`게시판 데이터 가져오기 GET ${url}`, checkGet);
+            it(`게시판 tag 검색 조건으로 가져오기 GET ${url}`, checkSearchGet);
+        });
+
+        describe('로그인후', () => {
+            let _id: string = '';
+            beforeEach(login);
+
+            it(`게시판 데이터 가져오기 GET ${url}`, checkGet);
+            it(`게시판 tag 검색 조건으로 가져오기 GET ${url}`, checkSearchGet);
+            
+            
+            it(`게시판 저장 POST ${url}`, (done) => {
+                server
+                    .post(url)
+                    .send({title: '테스트', content: '테스트입니다.', _menuId: '', tags: ['test1', 'test2', 'test3'], files: []})
+                    .expect(200)
+                    .expect("Content-type",/json/)
+                    .end((err, res) => {
+                        if(err) throw err;
+                        res.body.should.be.a.Object();
+                        res.body.should.have.property('title');
+                        res.body.should.have.property('regDt');
+                        res.body.should.have.property('tags');
+                        res.body.should.have.property('_id');
+                        res.body.should.have.property('content');
+                        res.body.should.have.property('_menuId');
+                        res.body.should.have.property('files');
+                        _id = res.body._id;
+                        done();
+                    });
+            });
+            it(`게시판 수정 PUT ${url}`, (done) => {
+                server
+                    .put(url)
+                    .send({_id: _id, title: '테스트 변경처리', memo: '변경 테스트입니다.', tags: ['test1'], files: []})
+                    .expect(200)
+                    .end(done);
+            });
+            it(`게시판 삭제 DELETE ${url}/:_id`, (done) => {
+                server
+                    .delete(`${url}/${_id}`)
+                    .expect(200)
+                    .end(done);
+            });
+        });
+    });
+});
