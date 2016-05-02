@@ -20,10 +20,9 @@ export module Models {
 
     /* 메뉴 - 메뉴 스키마는 서브 메뉴에서 또 쓰이기때문에 밖으로 뺐다. */
     const menuSchema = new Schema({
-        name: {type: String, unique: true},
+        name: String,
         nickName: String,
         url: String,
-        api: String,
         rank: Number,
         userId: String,
         regDt: {type: Date, default: Date.now}
@@ -32,9 +31,8 @@ export module Models {
         name: {type: String, unique: true},
         nickName: String,
         url: String,
-        api: String,
         rank: Number,
-        subMenus: menuSchema,
+        subMenus: [menuSchema],
         userId: String,
         regDt: {type: Date, default: Date.now}
     }));

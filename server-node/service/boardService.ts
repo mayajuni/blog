@@ -31,10 +31,13 @@ export module BoardService {
 
         const limitCount = page * view;
 
-        const totalCount = await Board.count(query);
-        const beforeItems: any = await Board.find(query).sort({regDt: -1}).limit(limitCount);
-        const lastId = beforeItems[beforeItems.length]._id;
-        const items = await Board.find({_id: {$lt: lastId}}).limit(view);
+        const totalCount: any = await Board.count(query);
+        let items: any = new Array();
+        if(totalCount > 0) {
+            const beforeItems: any = await Board.find(query).sort({regDt: -1}).limit(limitCount);
+            const lastId = beforeItems[beforeItems.length]._id;
+            items = await Board.find({_id: {$lt: lastId}}).limit(view);
+        }
         const result = {
             totalCount: totalCount,
             items: items,
@@ -102,7 +105,7 @@ export module BoardService {
         let board: any = new Board(boardVO);
         board.userId = userId;
         let result: any = await board.save();
-        if(boardVO.files) {
+        if(boardVO.files && boardVO.files.length > 0) {
             await FileService.addItemIds(boardVO.files, result._id);
         }
 

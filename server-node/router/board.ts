@@ -4,8 +4,8 @@
 import {Router} from "express";
 import johayoPvs = require("johayo-pvs");
 
-/* 에러시 check를 하여 next(err)을 해준다. */
 import {wrap} from "../module/error";
+/* 에러시 check를 하여 next(err)을 해준다. */
 import {loginCheck} from "../module/auth";
 
 /* service */
@@ -48,7 +48,7 @@ router.get('/:_id', wrap(async (req, res) => {
  * 저장
  */
 router.post('/', loginCheck, VO.setParams, wrap(async (req, res) => {
-    const result = BoardService.save(req.session.admin.userId, VO.get);
+    const result = await BoardService.save(req.session.admin.userId, VO.get);
     res.send(result);
 }));
 
@@ -63,7 +63,7 @@ router.put('/', loginCheck, VO.setParams, wrap(async (req, res) => {
 /**
  * 삭제
  */
-router.delete('/delete/:_id', loginCheck, wrap(async (req, res) => {
+router.delete('/:_id', loginCheck, wrap(async (req, res) => {
     await BoardService.remove(req.session.admin.userId, req.params._id);
     res.status(200).end();
 }));
