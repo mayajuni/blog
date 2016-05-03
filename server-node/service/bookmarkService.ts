@@ -114,4 +114,21 @@ export module BookmarkService {
 
         return result;
     }
+
+
+
+    /**
+     * 게시판 테스트 저장
+     */
+    export function saveTest() {
+        let board: any = new Bookmark({title: '테스트', memo: '테스트입니다.', tags: ['test1', 'test2', 'test3'], url: 'naver.com', imgUrl: 'http://static.naver.net/www/mobile/edit/2016/0407/mobile_17004159045.png', userId: 'test2'});
+        return board.save();
+    }
+
+    /**
+     * 게시판 테스트 삭제
+     */
+    export function removeTest() {
+        return Bookmark.remove({userId: 'test2'});
+    }
 }

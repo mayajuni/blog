@@ -29,6 +29,22 @@ VO.setParams = (req, res, next) => {
 };
 
 /**
+ * 테스트 파일 저장
+ */
+router.post('/test', wrap(async (req, res) => {
+    const result = await BoardService.saveTest();
+    res.send(result);
+}));
+
+/**
+ * 테스트 파일 삭제
+ */
+router.delete('/test', wrap(async (req, res) => {
+    await BoardService.removeTest();
+    res.status(200).end();
+}));
+
+/**
  * 리스트
  */
 router.get('/', VO.setParams, wrap(async (req, res) => {

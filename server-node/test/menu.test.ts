@@ -35,7 +35,7 @@ describe('메뉴', () => {
 
             describe('로그인후', () => {
                 let _id: string = '';
-                beforeEach(login);
+                before(login);
 
                 it(`메뉴 데이터 가져오기 GET ${url}`, checkGet);
                 it(`메뉴 저장 POST ${url}`, (done) => {
@@ -72,7 +72,7 @@ describe('메뉴', () => {
         });
         describe('오류테스트', () => {
             describe('로그인전', () => {
-                beforeEach(logout);
+                before(logout);
                 it(`메뉴 저장 오류(로그인 필수)`, (done) => {
                     server
                         .post(url)
@@ -114,7 +114,7 @@ describe('메뉴', () => {
             });
 
             describe('로그인후', () => {
-                beforeEach(login);
+                before(login);
 
                 describe('메뉴 저장 필수값 체크', () => {
                     const params: any = {name: 'test', nickName: 'test2', url: '/test/test'};
@@ -225,11 +225,11 @@ describe('메뉴', () => {
     describe('Step2', () => {
         let _step1Id: string;
         /* 테스트를 위한 step1 저장 */
-        beforeEach((done) => {
+        before((done) => {
             server.post('/api/login').send({userId: 'test', password: 'test'}).end(()=>{
                 server
                     .post(url)
-                    .send({name: 'test5', nickName: 'test2', url: '/test/test'})
+                    .send({name: 'test5', nickName: 'test2', url: '/test/test', subMenus: [{name: 'same', nickName: 'test'}]})
                     .expect(200)
                     .end((err, res) => {
                         if(err) throw err;
@@ -246,39 +246,49 @@ describe('메뉴', () => {
 
         describe('테스트', () => {
             describe('로그인후', () => {
-                let _id: string = '';
-                beforeEach(login);
+                let _id: string;
+                const name = 'test5';
+                before(login);
                 it(`메뉴 저장 POST`, (done) => {
                     server
                         .post(`${url}/step2/${_step1Id}`)
-                        .send({name: 'test5', nickName: 'test2', url: '/test/test'})
+                        .send({name: name, nickName: 'test2', url: '/test/test'})
                         .expect(200)
                         .end((err, res) => {
-                            if(err) throw err;
+                            if(err) {
+                                throw err;
+                            }
 
+                            server
+                                .get(`${url}/step2/${_step1Id}/${name}`)
+                                .expect(200)
+                                .end((err, res) => {
+                                    if(err) throw err;
 
-                            done();
+                                    res.body.should.have.property('_id');
+                                    _id = res.body._id;
+                                    done();
+                                });
                         });
                 });
-                /*it(`메뉴 수정 PUT`, (done) => {
+                it(`메뉴 수정 PUT`, (done) => {
                     server
                         .put(`${url}/step2/${_step1Id}`)
                         .send({_id: _id, nickName: 'test21111', url: '/test/test1212', rank: 2})
                         .expect(200)
                         .end(done);
                 });
-                it(`메뉴 삭제 DELETE ${url}/:_step1Id (${_step1Id})`, (done) => {
+                it(`메뉴 삭제 DELETE ${url}/step2/:_id`, (done) => {
                     server
-                        .delete(`${url}/${_step1Id}`)
+                        .delete(`${url}/step2/${_id}`)
                         .expect(200)
                         .end(done);
-                });*/
-
+                });
             });
         });
-        /*describe('오류테스트', () => {
+        describe('오류테스트', () => {
             describe('로그인전', () => {
-                beforeEach(logout);
+                before(logout);
                 it(`메뉴 저장 오류(로그인 필수)`, (done) => {
                     server
                         .post(`${url}/step2/${_step1Id}`)
@@ -307,7 +317,7 @@ describe('메뉴', () => {
                 });
                 it(`메뉴 삭제 오류(로그인 필수)`, (done) => {
                     server
-                        .delete(`${url}/122`)
+                        .delete(`${url}/step2/122`)
                         .expect(401)
                         .end((err, res) => {
                             if (err) throw err;
@@ -320,7 +330,7 @@ describe('메뉴', () => {
             });
 
             describe('로그인후', () => {
-                beforeEach(login);
+                before(login);
 
                 describe('메뉴 저장 필수값 체크', () => {
                     const params: any = {name: 'test', nickName: 'test2', url: '/test/test'};
@@ -374,7 +384,7 @@ describe('메뉴', () => {
                 });
                 it('메뉴 삭제 필수값 체크', (done) => {
                     server
-                        .delete(`${url}`)
+                        .delete(`${url}/step2/`)
                         .expect(404)
                         .end((err, res) => {
                             if (err) throw err;
@@ -385,36 +395,10 @@ describe('메뉴', () => {
                         });
                 });
 
-                const _id = '5726dff7eb13914c0e8a3ac6';
-                it(`메뉴 남의것 수정 오류`, (done) => {
-                    server
-                        .put(`${url}`)
-                        .send({_id: _id, nickName: 'test2', url: '/test/test', rank: 1})
-                        .expect(400)
-                        .end((err, res) => {
-                            if (err) throw err;
-
-                            res.should.have.property('error');
-                            res.error.text.should.equal('no_authority');
-                            done();
-                        });
-                });
-                it(`메뉴 남의것 삭제 오류`, (done) => {
-                    server
-                        .delete(`${url}/${_step1Id}`)
-                        .expect(400)
-                        .end((err, res) => {
-                            if (err) throw err;
-
-                            res.should.have.property('error');
-                            res.error.text.should.equal('no_authority');
-                            done();
-                        });
-                });
                 it(`중복이름 저장`, (done) => {
                     server
                         .post(`${url}/step2/${_step1Id}`)
-                        .send({name: 'test', nickName: 'test2', url: '/test/test'})
+                        .send({name: 'same', nickName: 'test2', url: '/test/test'})
                         .expect(400)
                         .end((err, res) => {
                             if(err) throw err;
@@ -425,10 +409,10 @@ describe('메뉴', () => {
                         });
                 });
             });
-        });*/
+        });
 
         /* 모든 테스트가 끝난후 테스트 데이터는 삭제 시킨다. */
-        afterEach((done) => {
+        after((done) => {
             server.post('/api/login').send({userId: 'test', password: 'test'}).end(()=>{
                 server
                     .delete(`${url}/${_step1Id}`)

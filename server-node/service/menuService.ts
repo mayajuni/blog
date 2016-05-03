@@ -67,6 +67,30 @@ export module MenuService {
     }
 
     /**
+     * 테스트를 위해 step2 _id를 가지고 온다.
+     *
+     * @param userId
+     * @param _id
+     * @param menuVO
+     * @returns {any}
+     */
+    export async function getStep2(userId: string, _id: string, name: string) {
+        const result: any = await Menu.findOne({_id: _id, userId: userId, 'subMenus.name' : name});
+
+        let step2: any;
+        if(result.subMenus) {
+            for(const sub of result.subMenus) {
+                if(sub.name == name) {
+                    step2 = sub;
+                    break;
+                }
+            }
+        }
+
+        return step2;
+    }
+
+    /**
      * step2를 저장
      *
      * @param userId
@@ -75,8 +99,10 @@ export module MenuService {
      * @returns {any}
      */
     export async function step2Save(userId: string, _id: string, menuVO: any) {
-        const count: any = await Menu.count({_id: _id, 'subMenuList.name': menuVO.name});
-
+        const count: any = await Menu.count({_id: _id, 'subMenus.name': menuVO.name});
+        console.log(menuVO.name);
+        console.log(_id);
+        console.log(count);
         if(count>0) {
             error(400, 'same_name');
         }
@@ -96,8 +122,8 @@ export module MenuService {
      * @param _id
      * @param _step2Id
      */
-    export async function step2Remove(userId: string, _id: string) {
-        const result: any = await Menu.update({userId: userId, subMenus: {$elemMatch: {_id: _id}}}, {$pull: {subMenus: {_id: _id}}});
+    export async function step2Remove(userId: string, _step2Id: string) {
+        const result: any = await Menu.update({userId: userId, 'subMenus._id': _step2Id}, {$pull: {subMenus: {_id: _step2Id}}});
 
         if(result.nModified < 1) {
             error(400, 'no_authority');

@@ -15,7 +15,8 @@ const VO = new johayoPvs({
     name: {type: String, validate: {method: 'POST'}},
     nickName: {type: String, validate: {method: 'PUT, POST'}},
     url: {type: String, validate: {method: 'PUT, POST'}},
-    rank: {type: Number, validate: {method: 'PUT'}}
+    rank: {type: Number, validate: {method: 'PUT'}},
+    subMenus: Array
 });
 VO.setParams = (req, res, next) => {
     VO.set(req, res, next);
@@ -50,9 +51,20 @@ router.put('/', loginCheck, VO.setParams, wrap(async (req, res) => {
 /**
  * 메뉴 삭제
  */
-router.delete('/:_id', loginCheck, wrap(async (req, res) => {
+router.delete('/:_id', loginCheck, wrap(async (req, res, next) => {
+    if(req.params._id === 'step2') {
+        next();
+    }
     await MenuService.remove(req.session.admin.userId, req.params._id);
     res.status(200).end();
+}));
+
+/**
+ * step2 메뉴
+ */
+router.get('/step2/:_step1Id/:name', loginCheck, wrap(async (req, res) => {
+    const step2 = await MenuService.getStep2(req.session.admin.userId, req.params._step1Id, req.params.name);
+    res.json(step2);
 }));
 
 /**

@@ -12,6 +12,7 @@ const server: any = request.agent('http://localhost:3000');
 const url = '/api/bookmark';
 const logout = (done) => server.get('/api/login/logout').end(done);
 const login = (done) => server.post('/api/login').send({userId: 'test', password: 'test'}).end(done);
+let another: any;
 
 // 북마크 데이터 가져오기 GET
 const checkGet = (done) => {
@@ -28,9 +29,9 @@ const checkGet = (done) => {
 };
 // 북마크 tag 검색 조건으로 가져오기 GET ${url}
 const checkSearchTagGet = (done) => {
-    const tags = ['test1'];
+    const tags = another.tags;
     server.get(url)
-        .query({tags: ['test1']})
+        .query({tags: tags})
         .expect(200)
         .end((err, res) => {
             if(err) throw err;
@@ -67,6 +68,21 @@ const checkSearchTagGet = (done) => {
 };
 
 describe('bookmark', () => {
+    /* 테스트 데이터 넣기 */
+    before((done) => {
+        server.post(`${url}/test`)
+            .expect(200)
+            .expect("Content-type",/json/)
+            .end((err, res) => {
+                if(err) {
+                    throw err;
+                }
+
+                another = res.body;
+                done();
+            });
+    });
+    
     describe('테스트', () => {
         describe('로그인전', () => {
             it(`북마크 데이터 가져오기 GET ${url}`, checkGet);
@@ -74,7 +90,7 @@ describe('bookmark', () => {
         });
         describe('로그인후', () => {
             let _id: string = '';
-            beforeEach(login);
+            before(login);
 
             it(`북마크 데이터 가져오기 GET ${url}`, checkGet);
             it(`북마크 tag 검색 조건으로 가져오기 GET ${url}`, checkSearchTagGet);
@@ -133,7 +149,7 @@ describe('bookmark', () => {
 
     describe('오류테스트', () => {
         describe('로그인전', () => {
-            beforeEach(logout);
+            before(logout);
             it(`북마크 저장 오류(로그인 필수)`, (done) => {
                 server
                     .post(url)
@@ -175,7 +191,7 @@ describe('bookmark', () => {
         });
 
         describe('로그인후', () => {
-            beforeEach(login);
+            before(login);
 
             describe('북마크 저장 필수값 체크', () => {
                 const params: any = {
@@ -249,11 +265,10 @@ describe('bookmark', () => {
                     });
             });
 
-            const _id = '5722fdf597a47c6026a2e586';
             it(`북마크 남의것 수정 오류`, (done) => {
                 server
                     .put(url)
-                    .send({_id: _id, title: '테스트 변경처리', memo: '변경 테스트입니다.', tags: ['test1'], url: 'http://fdjskbn.com'})
+                    .send({_id: another._id, title: '테스트 변경처리', memo: '변경 테스트입니다.', tags: ['test1'], url: 'http://fdjskbn.com'})
                     .expect(400)
                     .end((err, res) => {
                         if (err) throw err;
@@ -265,7 +280,7 @@ describe('bookmark', () => {
             });
             it(`북마크 남의것 삭제 오류`, (done) => {
                 server
-                    .delete(`${url}/${_id}`)
+                    .delete(`${url}/${another._id}`)
                     .expect(400)
                     .end((err, res) => {
                         if (err) throw err;
@@ -276,5 +291,12 @@ describe('bookmark', () => {
                     });
             });
         });
+    });
+
+    /* 테스트 데이터 삭제 */
+    after((done) => {
+        server.delete(`${url}/test`)
+            .expect(200)
+            .end(done);
     });
 });

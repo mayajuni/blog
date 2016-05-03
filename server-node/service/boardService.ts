@@ -26,18 +26,12 @@ export module BoardService {
             query.title = {$regex: title};
         }
 
-        page = page || 1;
-        view = view || 15;
-
-        const limitCount = page * view;
+        page = Number(page) || 1;
+        view = Number(view) || 15;
 
         const totalCount: any = await Board.count(query);
-        let items: any = new Array();
-        if(totalCount > 0) {
-            const beforeItems: any = await Board.find(query).sort({regDt: -1}).limit(limitCount);
-            const lastId = beforeItems[beforeItems.length]._id;
-            items = await Board.find({_id: {$lt: lastId}}).limit(view);
-        }
+        let items: any = await Board.find(query).sort({regDt : -1}).skip(view * (page- 1)).limit(view);
+
         const result = {
             totalCount: totalCount,
             items: items,
@@ -64,7 +58,7 @@ export module BoardService {
      * @param boardVO
      */
     export async function put(userId: string, boardVO: any) {
-        const result: any = await Board.update({_id: boardVO._Id, userId: userId},{$set: boardVO});
+        const result: any = await Board.update({_id: boardVO._id, userId: userId},{$set: boardVO});
 
         if(result.nModified < 1) {
             error(400, 'no_authority');
@@ -110,5 +104,20 @@ export module BoardService {
         }
 
         return result;
+    }
+
+    /**
+     * 게시판 테스트 저장
+     */
+    export function saveTest() {
+        let board: any = new Board({title: '테스트라더만 ㅋㅋ', content: '테스트입니다.', _menuId: '5726f8266a7a32bc143c6c8f', tags: ['test1', 'test2', 'test3'], files: [], userId: 'test2'});
+        return board.save();
+    }
+
+    /**
+     * 게시판 테스트 삭제
+     */
+    export function removeTest() {
+        return Board.remove({userId: 'test2'});
     }
 }
