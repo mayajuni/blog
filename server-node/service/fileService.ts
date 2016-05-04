@@ -1,7 +1,8 @@
 /**
  * Created by mayaj on 2016-04-27.
  */
-import {Models} from '../models/models'
+
+import {Models} from '../models/models';
 
 const File = Models.file;
 
@@ -16,18 +17,27 @@ export module FileService {
     }
 
     /**
-     * 아이템 아이디를 등록해준다.
+     * 게시판 ID를 넣어준다
      *
      * @param files
      * @param _itemId
      * @returns {Query<T>}
      */
-    export function addItemIds(files: any[], _itemId: string) {
+    export function addBoardId(files: any[], _itemId: string) {
         let fileIds: string[] = new Array();
         for(const file of files) {
             fileIds.push(file._id);
         }
 
         return File.update({_id: {$in: fileIds}}, {$set: {_itemId: _itemId}});
+    }
+
+    /**
+     * 파일 업로드
+     *
+     * @param req
+     */
+    export async function save(userId: string, file: any) {
+        
     }
 }

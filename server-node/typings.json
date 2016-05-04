@@ -17,6 +17,7 @@
     "mocha": "registry:dt/mocha#2.2.5+20160317120654",
     "mongoose": "registry:dt/mongoose#3.8.5+20160316155526",
     "morgan": "registry:dt/morgan#1.2.2+20160317120654",
+    "multer": "registry:dt/multer#0.0.0+20160317120654",
     "multiparty": "registry:dt/multiparty#0.0.0+20160316155526",
     "node": "registry:dt/node#4.0.0+20160412142033",
     "request": "registry:dt/request#0.0.0+20160316155526",

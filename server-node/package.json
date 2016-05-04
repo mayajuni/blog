@@ -23,7 +23,7 @@
     "moment": "^2.13.0",
     "mongoose": "^4.4.14",
     "morgan": "~1.7.0",
-    "multiparty": "^4.1.2",
+    "multer": "^1.1.0",
     "npm": "^3.8.7",
     "request": "^2.72.0",
     "request-promise": "^3.0.0",
