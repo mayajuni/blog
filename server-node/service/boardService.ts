@@ -100,7 +100,7 @@ export module BoardService {
         board.userId = userId;
         let result: any = await board.save();
         if(boardVO.files && boardVO.files.length > 0) {
-            await FileService.addItemIds(boardVO.files, result._id);
+            await FileService.addBoardId(boardVO.files, result._id);
         }
 
         return result;
