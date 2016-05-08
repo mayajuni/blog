@@ -40,14 +40,13 @@ export module Models {
     /* 파일 - 파일 스키마는 board 스키마에서 쓰이기 때문에 밖으로뺐다. */
     export let file = mongoose.model('file', new Schema({
         _itemId: Schema.Types.ObjectId,
-        name: String,
         userId: String,
+        originalname: String,
+        filename: String,
         path: String,
-        url: String,
-        virtualName: String,
+        destination: String,
         size: String,
-        isImg: Boolean,
-        type: String,
+        mimetype: String,
         needDelete: {type: Boolean, default: false},
         regDt: {type: Date, default: Date.now}
     }));

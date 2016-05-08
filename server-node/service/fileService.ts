@@ -37,7 +37,9 @@ export module FileService {
      *
      * @param req
      */
-    export async function save(userId: string, file: any) {
-        
+    export async function save(userId: string, fileInfo: any) {
+        let file: any = new File(fileInfo);
+        file.userId = userId;
+        return file.save();
     }
 }
