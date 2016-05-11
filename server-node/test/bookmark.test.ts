@@ -1,7 +1,7 @@
 /**
  * Created by mayaj on 2016-04-28.
  */
-import * as request from 'supertest';
+const request = require('supertest');
 require('should');
 
 import * as app from "../server-node";

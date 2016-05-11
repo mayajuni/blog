@@ -9,7 +9,7 @@ import * as cookieParser from 'cookie-parser';
 import * as bodyParser from 'body-parser';
 import * as mongoose from 'mongoose';
 import * as Session from "express-session";
-import redisStore = require("connect-redis");
+const redisStore = require("connect-redis");
 
 /* 로그파일 저장 */
 import {Logger} from './../module/logger';

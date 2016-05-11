@@ -2,7 +2,7 @@
  * Created by mayaj on 2016-04-24.
  */
 import {Router} from "express";
-import johayoPvs = require("johayo-pvs");
+const johayoPvs = require("johayo-pvs");
 
 import {wrap} from "../module/error";
 /* 에러시 check를 하여 next(err)을 해준다. */

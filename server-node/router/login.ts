@@ -3,7 +3,7 @@
  */
 import {Router} from "express";
 import {LoginService} from "../service/loginService";
-import johayoPvs = require("johayo-pvs");
+const johayoPvs = require("johayo-pvs");
 
 /* 에러시 check를 하여 next(err)을 해준다. */
 import {wrap} from "../module/error";
