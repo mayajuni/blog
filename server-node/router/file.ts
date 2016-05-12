@@ -21,4 +21,12 @@ router.post('/', loginCheck, multer({dest: '../uploads/'}).single('file'), wrap(
     res.json(req.file);
 }));
 
+/**
+ * 파일 삭제
+ */
+router.delete('/:_id', loginCheck, wrap(async (req, res) => {
+    await FileService.remove(req.params._id);
+    res.status(200).end();
+}));
+
 export = router;
