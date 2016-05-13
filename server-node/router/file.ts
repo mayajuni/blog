@@ -17,15 +17,15 @@ let router = Router();
  * 파일 저장
  */
 router.post('/', loginCheck, multer({dest: '../uploads/'}).single('file'), wrap(async (req, res) => {
-    await FileService.save(req.session.admin.userId, req.file);
-    res.json(req.file);
+    const result = await FileService.save(req.session.admin.userId, req.file);
+    res.json(result);
 }));
 
 /**
  * 파일 삭제
  */
 router.delete('/:_id', loginCheck, wrap(async (req, res) => {
-    await FileService.remove(req.params._id);
+    await FileService.realRemove(req.params._id);
     res.status(200).end();
 }));
 

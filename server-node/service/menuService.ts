@@ -8,6 +8,24 @@ const Menu = Models.menu;
 
 export module MenuService {
     /**
+     * 테스트 저장
+     *
+     * @param userId
+     * @param menuVO
+     */
+    export async function saveTest() {
+        let menu: any = new Menu({name: 'test2', nickName: '테스트.', url: 'testtest', rank: 1, userId: 'test2'});
+        return menu.save();
+    }
+
+    /**
+     * 테스트 삭제
+     *
+     */
+    export async function removeTest() {
+        return Menu.remove({userId: 'test2'});
+    }
+    /**
      * 메뉴를 리턴
      *
      * @returns {Query<T[]>}

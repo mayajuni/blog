@@ -25,6 +25,22 @@ VO.setParams = (req, res, next) => {
 let router = Router();
 
 /**
+ * 테스트 파일 저장
+ */
+router.post('/test', wrap(async (req, res) => {
+    const result = await MenuService.saveTest();
+    res.send(result);
+}));
+
+/**
+ * 테스트 파일 삭제
+ */
+router.delete('/test', wrap(async (req, res) => {
+    await MenuService.removeTest();
+    res.status(200).end();
+}));
+
+/**
  * 메뉴 가져오기
  */
 router.get('/', wrap(async (req, res) => {
