@@ -3,6 +3,7 @@
  */
 import * as winston from 'winston';
 import * as moment from 'moment';
+import * as fs from 'fs';
 
 export module Logger {
     export function errorLog(msg: any) {
@@ -56,6 +57,12 @@ export module Logger {
      * @param next
      */
     export function saveLogFile(req, res, next) {
+        if(!fs.existsSync('logs')){
+            fs.mkdirSync('logs');
+        }
+        if(!fs.existsSync('logs/server')){
+            fs.mkdirSync('logs/server');
+        }
         let meta: any = {
             ip:  req.headers['x-forwarded-for'] || req.connection.remoteAddress,
             req: {},
@@ -98,7 +105,13 @@ export module Logger {
      * @param next
      */
     export function saveErrorLogFile(err, req, res, next) {
-        if(err.statusCode >= 400) {
+        if(!fs.existsSync('logs')){
+            fs.mkdirSync('logs');
+        }
+        if(!fs.existsSync('logs/error')){
+            fs.mkdirSync('logs/error');
+        }
+        if(err.status >= 400) {
             let meta: any = {
                 ip:  req.headers['x-forwarded-for'] || req.connection.remoteAddress,
                 req: {},

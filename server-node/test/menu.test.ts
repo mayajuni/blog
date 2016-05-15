@@ -12,6 +12,8 @@ const server: any = request.agent('http://localhost:3000');
 const url = '/api/menu';
 const logout = (done) => server.get('/api/login/logout').end(done);
 const login = (done) => server.post('/api/login').send({userId: 'test', password: 'test'}).end(done);
+/* 다른메뉴 */
+let another: any;
 
 // 메뉴 가지고 오기
 const checkGet = (done) => {
@@ -27,6 +29,20 @@ const checkGet = (done) => {
 };
 
 describe('메뉴', () => {
+    before(done => {
+        server.post(`${url}/test`)
+            .expect(200)
+            .expect("Content-type",/json/)
+            .end((err, res) => {
+                if(err) {
+                    throw err;
+                }
+
+                another = res.body;
+                done();
+            });
+    });
+
     describe('Step1', () => {
         describe('테스트', () => {
             describe('로그인전', () => {
@@ -179,11 +195,10 @@ describe('메뉴', () => {
                         });
                 });
 
-                const _id = '5726dff7eb13914c0e8a3ac6';
                 it(`메뉴 남의것 수정 오류`, (done) => {
                     server
                         .put(`${url}`)
-                        .send({_id: _id, nickName: 'test2', url: '/test/test', rank: 1})
+                        .send({_id: another._id, nickName: 'test2', url: '/test/test', rank: 1})
                         .expect(400)
                         .end((err, res) => {
                             if (err) throw err;
@@ -195,7 +210,7 @@ describe('메뉴', () => {
                 });
                 it(`메뉴 남의것 삭제 오류`, (done) => {
                     server
-                        .delete(`${url}/${_id}`)
+                        .delete(`${url}/${another._id}`)
                         .expect(400)
                         .end((err, res) => {
                             if (err) throw err;
@@ -208,7 +223,7 @@ describe('메뉴', () => {
                 it(`중복이름 저장`, (done) => {
                     server
                         .post(url)
-                        .send({name: 'test', nickName: 'test2', url: '/test/test'})
+                        .send({name: 'test2', nickName: 'test2', url: '/test/test'})
                         .expect(400)
                         .end((err, res) => {
                             if(err) throw err;
@@ -420,5 +435,12 @@ describe('메뉴', () => {
                     .end(done);
             });
         });
+    });
+
+    /* 테스트 데이터 삭제 */
+    after((done) => {
+        server.delete(`${url}/test`)
+            .expect(200)
+            .end(done);
     });
 });

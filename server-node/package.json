@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "tsc": "tsc --p tsconfig.json"
   },
   "dependencies": {
     "body-parser": "~1.15.0",
