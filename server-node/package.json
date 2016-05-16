@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "test": "mocha",
+    "test": "npm run tsc & mocha",
+    "start": "npm run tsc && node server-node",
     "tsc": "tsc --p tsconfig.json"
   },
   "dependencies": {

@@ -131,7 +131,7 @@ describe('board', () => {
             });
         });
     });
-    
+
     describe('오류테스트', () => {
         describe('로그인전', () => {
             before(logout);
