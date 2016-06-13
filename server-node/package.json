@@ -8,11 +8,10 @@
     "tsc": "tsc --p tsconfig.json"
   },
   "dependencies": {
-    "body-parser": "~1.15.0",
+    "body-parser": "~1.15.1",
     "cheerio": "^0.20.0",
-    "compression": "^1.6.1",
     "connect-redis": "^3.0.2",
-    "cookie-parser": "~1.4.1",
+    "cookie-parser": "~1.4.3",
     "cors": "^2.7.1",
     "crypto": "^0.0.3",
     "debug": "^2.2.0",
@@ -20,21 +19,20 @@
     "express": "~4.13.4",
     "express-session": "^1.13.0",
     "http": "0.0.0",
-    "install": "^0.6.1",
-    "johayo-pvs": "0.0.7",
+    "install": "^0.8.1",
+    "johayo-pvs": "0.1.0",
     "moment": "^2.13.0",
-    "mongoose": "^4.4.14",
+    "mongoose": "^4.4.20",
     "morgan": "~1.7.0",
     "multer": "^1.1.0",
-    "npm": "^3.8.7",
     "request": "^2.72.0",
     "request-promise": "^3.0.0",
     "serve-favicon": "~2.3.0",
     "winston": "^2.2.0"
   },
   "devDependencies": {
-    "mocha": "^2.4.5",
-    "should": "^8.3.1",
+    "mocha": "^2.5.3",
+    "should": "^9.0.2",
     "supertest": "^1.2.0"
   }
 }
