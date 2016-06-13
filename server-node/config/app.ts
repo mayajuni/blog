@@ -2,7 +2,6 @@
  * Created by mayaj on 2016-04-22.
  */
 import * as express from "express";
-import * as compression from "compression";
 import * as cors from "cors";
 import * as logger from 'morgan';
 import * as cookieParser from 'cookie-parser';
@@ -24,7 +23,6 @@ export class Server {
         this.isProduction = process.env.NODE_ENV && ( process.env.NODE_ENV ).trim().toLowerCase() == 'production';
         //create expressjs application
         this.app = express();
-        this.app.use(compression());
         this.app.use(cors());
         this.app.use(bodyParser.json());
         /* URL으로 인코딩된 부분을 해석하기 위한 옵션 extended <- 이 부분은 잘 모르겠다. */
@@ -36,14 +34,14 @@ export class Server {
         /* connection Mongo */
         this.connectMongo();
         /* connection Redis Session */
-        this.connectRedis();
+        this.session();
 
         /* 실서버일때만 적용시킨다. */
         if(this.isProduction) {
             /* 로그를 파일로 저장 */
             this.app.use(Logger.saveLogFile);
         }
-        
+
         /* 라우터 */
         Router(this.app);
 
@@ -73,15 +71,8 @@ export class Server {
         connect();
     }
 
-    private connectRedis() {
-        const RedisStore = redisStore(Session);
-        this.app.use(Session({
-            store: new RedisStore({
-                port: process.env.REDIS_PORT,
-                host: process.env.REDIS_HOST,
-                pass: process.env.REDIS_PASSWORD,
-                ttl: 36000
-            }),
+    private session() {
+        const sessionConfig: any = {
             name : process.env.SESSION_NAME,
             secret: process.env.SESSION_SECRET,
             proxy: true,
@@ -90,6 +81,17 @@ export class Server {
             cookie: {
                 secure: false
             }
-        }));
+        };
+
+        if(this.isProduction) {
+            const RedisStore = redisStore(Session);
+            sessionConfig.store= new RedisStore({
+                port: process.env.REDIS_PORT,
+                host: process.env.REDIS_HOST,
+                pass: process.env.REDIS_PASSWORD,
+                ttl: 36000
+            });
+        }
+        this.app.use(Session(sessionConfig));
     }
 }
