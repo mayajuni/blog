@@ -118,9 +118,6 @@ export module MenuService {
      */
     export async function step2Save(userId: string, _id: string, menuVO: any) {
         const count: any = await Menu.count({_id: _id, 'subMenus.name': menuVO.name});
-        console.log(menuVO.name);
-        console.log(_id);
-        console.log(count);
         if(count>0) {
             error(400, 'same_name');
         }
